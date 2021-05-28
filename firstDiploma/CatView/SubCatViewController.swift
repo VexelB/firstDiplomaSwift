@@ -20,8 +20,6 @@ class SubCatViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-//        loadCatsRS()
-//        loadCatsAF()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

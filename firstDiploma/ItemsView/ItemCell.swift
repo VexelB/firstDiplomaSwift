@@ -10,9 +10,14 @@ import Kingfisher
 
 class ItemCell: UICollectionViewCell {
     
+    @IBOutlet weak var buyBtn: UIButton!
     @IBOutlet weak var itemImg: UIImageView!
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var priceLbl: UILabel!
+    @IBAction func buyPressed(_ sender: Any) {
+        buyBtnPressed?()
+    }
+    var buyBtnPressed : (()->())?
     var id = ""
     var item = Item()
     var name = "" {didSet {
@@ -28,8 +33,5 @@ class ItemCell: UICollectionViewCell {
         let processor = DownsamplingImageProcessor(size: itemImg.frame.size)
         self.itemImg.kf.indicatorType = .activity
         self.itemImg.kf.setImage(with: URL(string: "\(URLs().images)\(url)"), options: [.processor(processor)])
-    }
-    @IBAction func buyPressed(_ sender: Any) {
-        print("buy")
     }
 }

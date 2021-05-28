@@ -36,6 +36,10 @@ class ItemsViewController: UIViewController {
             if let select = collView.indexPathsForSelectedItems, let item = collView.cellForItem(at: select[0]) as? ItemCell {
                 vc.item = item.item
             }
+        } else if let vc = segue.destination as? BuyViewController, segue.identifier == "ItemsToBuy" {
+            if let select = collView.indexPathsForSelectedItems, let item = collView.cellForItem(at: select[0]) as? ItemCell {
+                vc.item = item.item
+            }
         }
     }
     
@@ -73,7 +77,6 @@ class ItemsViewController: UIViewController {
                     item.desc = i.1["description"].stringValue
                     item.catId = Int(self.cat) ?? 0
                     for j in i.1["offers"] {
-                        var temp = [String]()
                         item.offersSize.append(j.1["size"].stringValue)
                         item.offersQuantity.append(j.1["quantity"].stringValue)
                     }
@@ -120,6 +123,10 @@ extension ItemsViewController: UICollectionViewDataSource, UICollectionViewDeleg
         cell.itemImg.frame.size.width = cell.frame.width
         cell.itemImg.frame.size.height = cell.itemImg.frame.width * 4 / 5
         cell.layoutIfNeeded()
+        cell.buyBtnPressed = {
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            self.performSegue(withIdentifier: "ItemsToBuy", sender: nil)
+        }
         
         return cell
     }

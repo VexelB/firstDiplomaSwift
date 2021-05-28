@@ -20,7 +20,7 @@ class CatCell: UITableViewCell {
         self.id = id
         self.catLbl.text = lbl
         let url = img != "" ? img : "image/catalog/style/modile/acc_cat.png"
-        self.catImg.kf.setImage(with: URL(string: "\(URLs().images)\(url)"), options: [.transition(.fade(0.2))])
+        self.catImg.kf.setImage(with: URL(string: "\(URLs().images)\(url)"))
     }
     
     
