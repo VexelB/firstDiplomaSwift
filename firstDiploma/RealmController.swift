@@ -12,7 +12,6 @@ class Categorie: Object {
     @objc dynamic var id = ""
     @objc dynamic var name = ""
     @objc dynamic var iconImage = ""
-    var subs = List<Subcategorie>()
 }
 
 class Subcategorie: Object {
@@ -29,8 +28,10 @@ class Item: Object {
     @objc dynamic var article = ""
     @objc dynamic var mainImage = ""
     @objc dynamic var price = ""
-    var offers = [[String]]()
-    var images = [String]()
+    @objc dynamic var desc = ""
+    var offersSize = List<String>()
+    var offersQuantity = List<String>()
+    var images = List<String>()
 }
 
 class RealmController: NSObject {
@@ -52,9 +53,6 @@ class RealmController: NSObject {
     func put(obj: Object) {
         try! realm.write{
             realm.add(obj)
-            if let temp = obj as? Subcategorie {
-                temp.parent?.subs.append(temp)
-            }
         }
     }
     

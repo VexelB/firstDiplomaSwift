@@ -44,7 +44,7 @@ extension SubCatViewController: UITableViewDataSource, UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CatCell", for: indexPath) as! CatCell
-        cell.initCell(id: cats[indexPath.row]["id"] as! String,img: cats[indexPath.row]["iconImage"] as! String, lbl: cats[indexPath.row]["name"] as! String)
+        cell.initCell(id: cats[indexPath.row].id,img: cats[indexPath.row].iconImage, lbl: cats[indexPath.row].name)
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

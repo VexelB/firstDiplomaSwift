@@ -30,6 +30,15 @@ class ItemsViewController: UIViewController {
     @IBAction func showCart(_ sender: Any) {
         performSegue(withIdentifier: "ItemsToCart", sender: nil)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? ItemViewController, segue.identifier == "ItemsToItem" {
+            if let select = collView.indexPathsForSelectedItems, let item = collView.cellForItem(at: select[0]) as? ItemCell {
+                vc.item = item.item
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadRS()
@@ -61,17 +70,15 @@ class ItemsViewController: UIViewController {
                     item.article = i.1["article"].stringValue
                     item.mainImage = i.1["mainImage"].stringValue
                     item.price = i.1["price"].stringValue
+                    item.desc = i.1["description"].stringValue
                     item.catId = Int(self.cat) ?? 0
-                    for i in i.1["offers"] {
+                    for j in i.1["offers"] {
                         var temp = [String]()
-                        let a = JSON(i)
-                        temp.append(a["prize"].stringValue)
-                        temp.append(a["quantity"].stringValue)
-                        item.offers.append(temp)
+                        item.offersSize.append(j.1["size"].stringValue)
+                        item.offersQuantity.append(j.1["quantity"].stringValue)
                     }
-                    for i in i.1["productImages"] {
-                        let a = JSON(i)
-                        item.images.append(a["imageURL"].stringValue)
+                    for j in i.1["productImages"] {
+                            item.images.append(j.1["imageURL"].stringValue)
                     }
                     self.realmcontroller.put(obj: item)
                 }
@@ -105,19 +112,20 @@ extension ItemsViewController: UICollectionViewDataSource, UICollectionViewDeleg
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ItemCell", for: indexPath) as! ItemCell
+        cell.initCell(item: items[indexPath.row])
         
-        cell.initCell(id: items[indexPath.row]["id"] as! String, img: items[indexPath.row]["mainImage"] as! String, name: items[indexPath.row]["name"] as! String, price: items[indexPath.row]["price"] as! String, view: view)
         let temp = cell.frame.width
         cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .trailing, relatedBy: .equal, toItem: cell.nameLbl, attribute: .trailing, multiplier: 1, constant: 8))
-        cell.nameLbl.addConstraint(NSLayoutConstraint(item: cell.nameLbl, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: temp - 16))
+        cell.nameLbl.addConstraint(NSLayoutConstraint(item: cell.nameLbl!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: temp - 16))
         cell.itemImg.frame.size.width = cell.frame.width
         cell.itemImg.frame.size.height = cell.itemImg.frame.width * 4 / 5
         cell.layoutIfNeeded()
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        print("")
+        performSegue(withIdentifier: "ItemsToItem", sender: nil)
     }
     
 }

@@ -31,7 +31,7 @@ class CatViewController: UIViewController {
         if let vc = segue.destination as? SubCatViewController, segue.identifier == "CatToSub" {
             if let select = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: select) as? CatCell {
                 vc.navItem.title = cell.catLbl.text
-                vc.cats = subs.filter{($0["parent"] as! Categorie)["id"] as! String == cell.id}
+                vc.cats = subs.filter{$0.parent!.id == cell.id}
             }
         } else if let vc = segue.destination as? ItemsViewController, segue.identifier == "CatToItems" {
             if let select = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: select) as? CatCell {
@@ -101,12 +101,12 @@ extension CatViewController: UITableViewDataSource, UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CatCell", for: indexPath) as! CatCell
-        cell.initCell(id: cats[indexPath.row]["id"] as! String,img: cats[indexPath.row]["iconImage"] as! String, lbl: cats[indexPath.row]["name"] as! String)
+        cell.initCell(id: cats[indexPath.row].id, img: cats[indexPath.row].iconImage, lbl: cats[indexPath.row].name)
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selected = cats[indexPath.row]
-        if subs.map({($0["parent"] as! Categorie)["name"] as! String}).contains(selected["name"] as! String) {
+        if subs.map({$0.parent!.name}).contains(selected.name) {
             performSegue(withIdentifier: "CatToSub", sender: nil)
         } else {
             performSegue(withIdentifier: "CatToItems", sender: nil)
