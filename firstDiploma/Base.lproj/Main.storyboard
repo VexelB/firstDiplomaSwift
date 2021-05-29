@@ -99,7 +99,7 @@
         <!--Подгатегории-->
         <scene sceneID="4HQ-QR-zfK">
             <objects>
-                <viewController id="176-q5-Qns" userLabel="Подгатегории" customClass="SubCatViewController" customModule="firstDiploma" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="176-q5-Qns" userLabel="Подгатегории" customClass="CatViewController" customModule="firstDiploma" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9V2-Fb-lpt">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -857,7 +857,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="Jkx-58-deP"/>
         <segue reference="lAB-lR-DGa"/>
-        <segue reference="FP7-DK-RjV"/>
+        <segue reference="dfS-bN-WaE"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="cart" catalog="system" width="128" height="102"/>

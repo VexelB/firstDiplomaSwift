@@ -9,7 +9,7 @@ import UIKit
 
 class CartViewController: UIViewController {
     
-    let realmcontroller = RealmController.shared
+//    let realmcontroller = RealmController.shared
     var cart = [CartItem]()
     var fullprice = 0 { didSet{
         fullpriceLbl.text = "\(fullprice)₽"
@@ -18,8 +18,21 @@ class CartViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var fullpriceLbl: UILabel!
     @IBAction func order(_ sender: Any) {
-        realmcontroller.clear(obj: CartItem.self)
+//        realmcontroller.clear(obj: CartItem.self)
         tableView.reloadData()
+    }
+    
+    func loadCart() {
+//        realmcontroller.load(obj: CartItem.self, completion: { temp in
+//                    self.cart = []
+//                    self.fullprice = 0
+//                    for i in temp {
+//                        if let a = i as? CartItem {
+//                            self.cart.append(a)
+//                            self.fullprice += Int(a.price.split(separator: ".")[0]) ?? 0
+//                        }
+//                    }
+//        })
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -33,16 +46,7 @@ class CartViewController: UIViewController {
 
 extension CartViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        realmcontroller.load(obj: CartItem.self, completion: { temp in
-            self.cart = []
-            self.fullprice = 0
-            for i in temp {
-                if let a = i as? CartItem {
-                    self.cart.append(a)
-                    self.fullprice += Int(a.price.split(separator: ".")[0]) ?? 0
-                }
-            }
-        })
+//        loadCart()
         return cart.count
     }
 

@@ -7,6 +7,10 @@
 
 import UIKit
 
+enum Services {
+    static let dBRealmService = DBRealmService()
+}
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 

@@ -12,7 +12,7 @@ class BuyViewController: UIViewController {
     var item = Item()
     var sizes = [String]()
     var quant = [String]()
-    let realmcontroller = RealmController.shared
+//    let realmcontroller = RealmController.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,16 +24,6 @@ class BuyViewController: UIViewController {
         super.touchesEnded(touches, with: event)
         dismiss(animated: true, completion: nil)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
 
@@ -55,7 +45,7 @@ extension BuyViewController: UITableViewDataSource, UITableViewDelegate {
         cartItem.size = sizes[indexPath.row]
         cartItem.price = item.price
         cartItem.article = item.id
-        realmcontroller.put(obj: cartItem)
+//        realmcontroller.put(obj: cartItem)
         dismiss(animated: true, completion: nil)
     }
 }

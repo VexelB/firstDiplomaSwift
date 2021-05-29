@@ -9,7 +9,7 @@ import UIKit
 
 class SubCatViewController: UIViewController {
 
-    let realmcontroller = RealmController.shared
+//    let realmcontroller = RealmController.shared
 
     var cats = [Subcategorie]()
     @IBOutlet weak var navItem: UINavigationItem!

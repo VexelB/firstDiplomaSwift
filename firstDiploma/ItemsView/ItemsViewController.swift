@@ -22,7 +22,7 @@ class ItemsViewController: UIViewController {
     
     var items = [Item]()
     var cat = ""
-    let realmcontroller = RealmController.shared
+//    let realmcontroller = RealmController.shared
     
     @IBOutlet weak var collView: UICollectionView!
     @IBOutlet weak var navItem: UINavigationItem!
@@ -45,46 +45,47 @@ class ItemsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadRS()
-        loadAF()
+//        loadRS()
+//        loadAF()
         // Do any additional setup after loading the view.
     }
     
     func loadRS(){
-        realmcontroller.load(catId: cat, obj: Item.self, completion: { temp in
-            self.items = []
-            for i in temp {
-                if let a = i as? Item {
-                    self.items.append(a)
-                }
-            }
-            self.collView.reloadData()
-            self.collView.layoutIfNeeded()
-        })
+//        realmcontroller.load(catId: cat, obj: Item.self, completion: { temp in
+//            self.items = []
+//            for i in temp {
+//                if let a = i as? Item {
+//                    self.items.append(a)
+//                }
+//            }
+//            self.collView.reloadData()
+//            self.collView.layoutIfNeeded()
+//        })
     }
     func loadAF() {
         AF.request("\(URLs().itemsURL)\(self.cat)").responseJSON {
             response in if let objects = response.value {
-                self.realmcontroller.clear(catId: self.cat, obj: Item.self)
-                let json = JSON(objects)
-                for i in json {
-                    let item = Item()
-                    item.id = i.0
-                    item.name = i.1["name"].stringValue
-                    item.article = i.1["article"].stringValue
-                    item.mainImage = i.1["mainImage"].stringValue
-                    item.price = i.1["price"].stringValue
-                    item.desc = i.1["description"].stringValue
-                    item.catId = Int(self.cat) ?? 0
-                    for j in i.1["offers"] {
-                        item.offersSize.append(j.1["size"].stringValue)
-                        item.offersQuantity.append(j.1["quantity"].stringValue)
-                    }
-                    for j in i.1["productImages"] {
-                            item.images.append(j.1["imageURL"].stringValue)
-                    }
-                    self.realmcontroller.put(obj: item)
-                }
+//                self.realmcontroller.clear(catId: self.cat, obj: Item.self) {
+//                    let json = JSON(objects)
+//                    for i in json {
+//                        let item = Item()
+//                        item.id = i.0
+//                        item.name = i.1["name"].stringValue
+//                        item.article = i.1["article"].stringValue
+//                        item.mainImage = i.1["mainImage"].stringValue
+//                        item.price = i.1["price"].stringValue
+//                        item.desc = i.1["description"].stringValue
+//                        item.catId = Int(self.cat) ?? 0
+//                        for j in i.1["offers"] {
+//                            item.offersSize.append(j.1["size"].stringValue)
+//                            item.offersQuantity.append(j.1["quantity"].stringValue)
+//                        }
+//                        for j in i.1["productImages"] {
+//                                item.images.append(j.1["imageURL"].stringValue)
+//                        }
+//                        self.realmcontroller.put(obj: item)
+//                    }
+//                }
             }
         self.loadRS()
         }

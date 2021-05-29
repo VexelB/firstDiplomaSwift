@@ -19,7 +19,7 @@
 		793894B7265B91D500EC4514 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 793894B6265B91D500EC4514 /* Realm */; };
 		793894B9265B91D500EC4514 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 793894B8265B91D500EC4514 /* RealmSwift */; };
 		79621F7F265D5D20001AAC5A /* CatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F7E265D5D20001AAC5A /* CatCell.swift */; };
-		79621F81265D5F7D001AAC5A /* RealmController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F80265D5F7D001AAC5A /* RealmController.swift */; };
+		79621F81265D5F7D001AAC5A /* DBRealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F80265D5F7D001AAC5A /* DBRealmService.swift */; };
 		79621F83265D67C8001AAC5A /* URLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F82265D67C8001AAC5A /* URLs.swift */; };
 		79621F85265E5D9D001AAC5A /* SubCatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F84265E5D9D001AAC5A /* SubCatViewController.swift */; };
 		79621F89265E6D1A001AAC5A /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F88265E6D1A001AAC5A /* ItemsViewController.swift */; };
@@ -42,7 +42,7 @@
 		793894A4265A925300EC4514 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		793894A6265A925300EC4514 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		79621F7E265D5D20001AAC5A /* CatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatCell.swift; sourceTree = "<group>"; };
-		79621F80265D5F7D001AAC5A /* RealmController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmController.swift; sourceTree = "<group>"; };
+		79621F80265D5F7D001AAC5A /* DBRealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBRealmService.swift; sourceTree = "<group>"; };
 		79621F82265D67C8001AAC5A /* URLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLs.swift; sourceTree = "<group>"; };
 		79621F84265E5D9D001AAC5A /* SubCatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCatViewController.swift; sourceTree = "<group>"; };
 		79621F88265E6D1A001AAC5A /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
@@ -100,7 +100,7 @@
 				793894A1265A925300EC4514 /* Assets.xcassets */,
 				793894A3265A925300EC4514 /* LaunchScreen.storyboard */,
 				793894A6265A925300EC4514 /* Info.plist */,
-				79621F80265D5F7D001AAC5A /* RealmController.swift */,
+				79621F80265D5F7D001AAC5A /* DBRealmService.swift */,
 				79621F82265D67C8001AAC5A /* URLs.swift */,
 			);
 			path = firstDiploma;
@@ -239,7 +239,7 @@
 				79E7BE79266169700001DB4B /* CartCell.swift in Sources */,
 				79621F89265E6D1A001AAC5A /* ItemsViewController.swift in Sources */,
 				79621F8B265E96AD001AAC5A /* ItemCell.swift in Sources */,
-				79621F81265D5F7D001AAC5A /* RealmController.swift in Sources */,
+				79621F81265D5F7D001AAC5A /* DBRealmService.swift in Sources */,
 				79621F85265E5D9D001AAC5A /* SubCatViewController.swift in Sources */,
 				79389499265A925000EC4514 /* AppDelegate.swift in Sources */,
 				7938949B265A925000EC4514 /* SceneDelegate.swift in Sources */,
