@@ -99,7 +99,7 @@
         <!--Подгатегории-->
         <scene sceneID="4HQ-QR-zfK">
             <objects>
-                <viewController id="176-q5-Qns" userLabel="Подгатегории" customClass="CatViewController" customModule="firstDiploma" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="176-q5-Qns" userLabel="Подгатегории" customClass="SubCatViewController" customModule="firstDiploma" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9V2-Fb-lpt">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -180,7 +180,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NCX-g9-20M" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1805.5999999999999" y="88.605697151424295"/>
+            <point key="canvasLocation" x="1839" y="89"/>
         </scene>
         <!--Корзина-->
         <scene sceneID="w2k-q9-WpC">

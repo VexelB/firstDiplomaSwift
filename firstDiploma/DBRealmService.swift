@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import SwiftyJSON
 
 class CartItem: Object {
     @objc dynamic var catId = 0
@@ -22,13 +23,28 @@ class Categorie: Object {
     @objc dynamic var id = ""
     @objc dynamic var name = ""
     @objc dynamic var iconImage = ""
+    convenience init(data: (String, JSON)) {
+        self.init(value: [
+            "id": data.0,
+            "name": data.1["name"].stringValue,
+            "iconImage": data.1["iconImage"].stringValue
+        ])
+    }
 }
 
 class Subcategorie: Object {
     @objc dynamic var id = ""
     @objc dynamic var name = ""
     @objc dynamic var iconImage = ""
-    @objc dynamic var parent: Categorie?
+    @objc dynamic var parent = ""
+    convenience init(parentId: String, data: (String, JSON)) {
+        self.init(value: [
+            "id": data.0,
+            "name": data.1["name"].stringValue,
+            "iconImage": data.1["iconImage"].stringValue,
+            "parentId": parentId
+        ])
+    }
 }
 
 class Item: Object {
@@ -80,7 +96,14 @@ struct SubcategorieModel {
     let id: String
     let name: String
     let iconImage: String
-    let parent: CategorieModel?
+    let parent: String
+    
+    init(subcategorie: Subcategorie) {
+        self.id = subcategorie.id
+        self.name = subcategorie.name
+        self.iconImage = subcategorie.iconImage
+        self.parent = subcategorie.parent
+    }
 }
 
 struct ItemModel {
@@ -101,7 +124,7 @@ protocol DBServiceProtocol {
     
     func clear(catId: String, obj: Object.Type, completion: @escaping () -> Void)
     
-    func put(obj: Object)
+    func put(json: JSON, completion: @escaping () -> Void)
 
     func load(obj: Object.Type, completion: @escaping ([Any]) -> Void)
     
@@ -138,22 +161,28 @@ class DBRealmService: DBServiceProtocol {
         }
     }
     
-    func put(obj: Object) {
+    func put(json: JSON, completion: @escaping () -> Void) {
         DispatchQueue.init(label: "aaa").async {
             autoreleasepool {
                 let realm = try! Realm()
-                try! realm.write {
-                    if let temp = obj as? CartItem {
-                        temp.catId = (realm.objects(CartItem.self).last?.catId ?? 0) + 1
-                        temp.id = "\(temp.catId)"
+                let cats = json.map { cat -> Categorie in
+                    let categorieR = Categorie(data: cat)
+                    let subcategories = cat.1["subcategories"].map {
+                        Subcategorie(parentId: cat.0, data: $0)
                     }
-                    realm.add(obj)
+                    try! realm.write{
+                        realm.add(subcategories)
+                    }
+                    return categorieR
+                }
+                try! realm.write{
+                    realm.add(cats)
+                }
+                DispatchQueue.main.async {
+                    completion()
                 }
             }
         }
-        
-        
-//        print(realm.objects(CartItem.self))
     }
     
     func load(obj: Object.Type, completion: @escaping ([Any]) -> Void){
@@ -170,6 +199,10 @@ class DBRealmService: DBServiceProtocol {
                 case is Categorie:
                     models = result.map {
                         return CategorieModel(categorie: $0 as! Categorie)
+                    }
+                case is Subcategorie:
+                    models = result.map {
+                        return SubcategorieModel(subcategorie: $0 as! Subcategorie)
                     }
                 default:
                     break
