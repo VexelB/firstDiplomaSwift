@@ -101,7 +101,7 @@ extension ItemsViewController: UICollectionViewDataSource, UICollectionViewDeleg
         cell.initCell(item: items[indexPath.row])
         
         let temp = cell.frame.width
-        cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .trailing, relatedBy: .equal, toItem: cell.nameLbl, attribute: .trailing, multiplier: 1, constant: 8))
+//        cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .trailing, relatedBy: .equal, toItem: cell.nameLbl, attribute: .trailing, multiplier: 1, constant: 8))
         cell.nameLbl.addConstraint(NSLayoutConstraint(item: cell.nameLbl!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: temp - 16))
         cell.itemImg.frame.size.width = cell.frame.width
         cell.itemImg.frame.size.height = cell.itemImg.frame.width * 4 / 5

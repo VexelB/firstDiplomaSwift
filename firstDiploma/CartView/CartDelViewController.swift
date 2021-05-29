@@ -11,7 +11,7 @@ class CartDelViewController: UIViewController {
 
     let dbService = Services.dBRealmService
     
-    var catId = ""
+    var cartItem: CartItemModel?
     var delegate: DeleteCartItemProtocol?
     
     @IBAction func noPressed(_ sender: Any) {
@@ -19,10 +19,12 @@ class CartDelViewController: UIViewController {
     }
     
     @IBAction func yesPressed(_ sender: Any) {
-        dbService.clearByCategorie(catId: catId, obj: CartItem.self, completion: {
-            self.dismiss(animated: true, completion: nil)
-            self.delegate?.loadCart()
-        })
+        if let item = cartItem {
+            dbService.delFromCart(item: item, completion: {
+                self.dismiss(animated: true, completion: nil)
+                self.delegate?.loadCart()
+            })
+        }
     }
 
 }

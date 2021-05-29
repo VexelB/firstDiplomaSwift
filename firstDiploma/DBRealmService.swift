@@ -14,9 +14,17 @@ class Categorie: Object {
     @objc dynamic var name = ""
     @objc dynamic var iconImage = ""
     @objc dynamic var parentId = ""
-    convenience init(parentId: String, data: (String, JSON)) {
+    convenience init(data: (String, JSON)) {
         self.init(value: [
             "id": data.0,
+            "name": data.1["name"].stringValue,
+            "iconImage": data.1["iconImage"].stringValue,
+            "parentId": ""
+        ])
+    }
+    convenience init(parentId: String, data: (String, JSON)) {
+        self.init(value: [
+            "id": data.1["id"].stringValue,
             "name": data.1["name"].stringValue,
             "iconImage": data.1["iconImage"].stringValue,
             "parentId": parentId
@@ -139,6 +147,8 @@ protocol DBServiceProtocol {
     
     func clearByCategorie(catId: String, obj: Object.Type, completion: @escaping () -> Void)
     
+    func delFromCart(item: CartItemModel, completion: @escaping () -> Void)
+    
     func putCategories(json: JSON, completion: @escaping () -> Void)
     
     func putItems(catId:String, json: JSON, completion: @escaping () -> Void)
@@ -180,12 +190,27 @@ class DBRealmService: DBServiceProtocol {
         }
     }
     
+    func delFromCart(item: CartItemModel, completion: @escaping () -> Void) {
+        DispatchQueue.init(label: "dbThread").async {
+            autoreleasepool{
+                let realm = try! Realm()
+                try! realm.write {
+                    if let deleted = realm.objects(CartItem.self).filter({$0.name == item.name}).filter({$0.size == item.size}).first {
+                        realm.delete(deleted)
+                    }
+                }
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }
+        }
+    }
+    
     func putInCart(item: ItemModel, size: String) {
         DispatchQueue.init(label: "dbThread").async {
             autoreleasepool {
                 let realm = try! Realm()
                 let cartItem = CartItem()
-                cartItem.catId = (realm.objects(CartItem.self).last?.catId ?? 0) + 1
                 cartItem.name = item.name
                 cartItem.mainImage = item.mainImage
                 cartItem.size = size
@@ -203,9 +228,9 @@ class DBRealmService: DBServiceProtocol {
             autoreleasepool {
                 let realm = try! Realm()
                 let cats = json.map { cat -> Categorie in
-                    let categorieR = Categorie(parentId: "", data: cat)
+                    let categorieR = Categorie(data: cat)
                     let subcategories = cat.1["subcategories"].map {
-                        Categorie(parentId: cat.0, data: $0)
+                        Categorie(parentId: categorieR.id, data: $0)
                     }
                     try! realm.write{
                         realm.add(subcategories)
