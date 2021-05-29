@@ -19,12 +19,12 @@ class ItemCell: UICollectionViewCell {
     }
     var buyBtnPressed : (()->())?
     var id = ""
-    var item = Item()
+    var item = ItemModel()
     var name = "" {didSet {
         self.nameLbl.text = name
     }}
     
-    func initCell(item: Item) {
+    func initCell(item: ItemModel) {
         self.item = item
         self.id = item.id
         self.name = item.name

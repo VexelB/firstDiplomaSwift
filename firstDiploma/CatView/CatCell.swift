@@ -20,7 +20,8 @@ class CatCell: UITableViewCell {
         self.id = id
         self.catLbl.text = lbl
         let url = img != "" ? img : "image/catalog/style/modile/acc_cat.png"
-        self.catImg.kf.setImage(with: URL(string: "\(URLs().images)\(url)"))
+        let processor = DownsamplingImageProcessor(size: catImg.frame.size)
+        self.catImg.kf.setImage(with: URL(string: "\(URLs().images)\(url)"), options: [.processor(processor)])
     }
     
     

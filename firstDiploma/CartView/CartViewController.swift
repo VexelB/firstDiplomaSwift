@@ -7,10 +7,14 @@
 
 import UIKit
 
+protocol DeleteCartItemProtocol: AnyObject {
+    func loadCart()
+}
+
 class CartViewController: UIViewController {
     
-//    let realmcontroller = RealmController.shared
-    var cart = [CartItem]()
+    let dbService = Services.dBRealmService
+    var cart = [CartItemModel]()
     var fullprice = 0 { didSet{
         fullpriceLbl.text = "\(fullprice)₽"
     }}
@@ -18,27 +22,19 @@ class CartViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var fullpriceLbl: UILabel!
     @IBAction func order(_ sender: Any) {
-//        realmcontroller.clear(obj: CartItem.self)
-        tableView.reloadData()
+        dbService.clear(obj: CartItem.self, completion: { [weak self] in
+            self?.tableView.reloadData()
+        })
     }
     
-    func loadCart() {
-//        realmcontroller.load(obj: CartItem.self, completion: { temp in
-//                    self.cart = []
-//                    self.fullprice = 0
-//                    for i in temp {
-//                        if let a = i as? CartItem {
-//                            self.cart.append(a)
-//                            self.fullprice += Int(a.price.split(separator: ".")[0]) ?? 0
-//                        }
-//                    }
-//        })
+    override func viewDidLoad() {
+        loadCart()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? CartDelViewController {
             vc.catId = "\((tableView.cellForRow(at: tableView.indexPathForSelectedRow!) as! CartCell).id)"
-            vc.par = self
+            vc.delegate = self
         }
     }
     
@@ -46,7 +42,6 @@ class CartViewController: UIViewController {
 
 extension CartViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        loadCart()
         return cart.count
     }
 
@@ -61,4 +56,14 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
 
+}
+
+extension CartViewController: DeleteCartItemProtocol {
+    func loadCart() {
+        dbService.load(obj: CartItem.self, completion: { [weak self] result in
+            self?.fullprice = 0
+            self?.cart = result.map { $0 as! CartItemModel }
+            self?.tableView.reloadData()
+        })
+    }
 }

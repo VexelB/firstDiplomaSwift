@@ -12,7 +12,7 @@ class ItemViewController: UIViewController {
 
     var images = [String]()
     var frame = CGRect.zero
-    var item = Item()
+    var item = ItemModel()
     
     @IBOutlet weak var imagesView: UIView!
     @IBOutlet weak var descLbl: UILabel!

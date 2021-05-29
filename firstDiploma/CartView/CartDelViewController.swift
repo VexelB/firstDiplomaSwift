@@ -9,20 +9,20 @@ import UIKit
 
 class CartDelViewController: UIViewController {
 
-//    let realmcontroller = RealmController.shared
+    let dbService = Services.dBRealmService
     
     var catId = ""
-    var par = CartViewController()
+    var delegate: DeleteCartItemProtocol?
     
     @IBAction func noPressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
     @IBAction func yesPressed(_ sender: Any) {
-//        realmcontroller.clear(catId: catId, obj: CartItem.self) { [weak self] in
-//            self?.par.tableView.reloadData()
-//        }
-        dismiss(animated: true, completion: nil)
+        dbService.clearByCategorie(catId: catId, obj: CartItem.self, completion: {
+            self.dismiss(animated: true, completion: nil)
+            self.delegate?.loadCart()
+        })
     }
 
 }

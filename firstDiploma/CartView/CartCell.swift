@@ -22,7 +22,7 @@ class CartCell: UITableViewCell {
     var id = 0
     var delBtnPressed: (()->())?
     
-    func initCell(item: CartItem) {
+    func initCell(item: CartItemModel) {
         nameLbl.text = item.name
         sizeLbl.text = item.size
         priceLbl.text = "\(item.price.split(separator: ".")[0])₽"

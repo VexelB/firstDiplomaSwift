@@ -9,34 +9,11 @@ import UIKit
 import RealmSwift
 import SwiftyJSON
 
-class CartItem: Object {
-    @objc dynamic var catId = 0
-    @objc dynamic var id = ""
-    @objc dynamic var article = ""
-    @objc dynamic var name = ""
-    @objc dynamic var mainImage = ""
-    @objc dynamic var price = ""
-    @objc dynamic var size = ""
-}
-
 class Categorie: Object {
     @objc dynamic var id = ""
     @objc dynamic var name = ""
     @objc dynamic var iconImage = ""
-    convenience init(data: (String, JSON)) {
-        self.init(value: [
-            "id": data.0,
-            "name": data.1["name"].stringValue,
-            "iconImage": data.1["iconImage"].stringValue
-        ])
-    }
-}
-
-class Subcategorie: Object {
-    @objc dynamic var id = ""
-    @objc dynamic var name = ""
-    @objc dynamic var iconImage = ""
-    @objc dynamic var parent = ""
+    @objc dynamic var parentId = ""
     convenience init(parentId: String, data: (String, JSON)) {
         self.init(value: [
             "id": data.0,
@@ -55,9 +32,86 @@ class Item: Object {
     @objc dynamic var mainImage = ""
     @objc dynamic var price = ""
     @objc dynamic var desc = ""
-    var offersSize = List<String>()
-    var offersQuantity = List<String>()
+    var offerSizes = List<String>()
+    var offerQuantities = List<String>()
     var images = List<String>()
+    
+    convenience init(catId: String, data: (String, JSON)) {
+        self.init(value: [
+            "id": data.0,
+            "name": data.1["name"].stringValue,
+            "mainImage": data.1["mainImage"].stringValue,
+            "price": data.1["price"].stringValue,
+            "desc": data.1["description"].stringValue,
+            "catId": Int(catId) ?? 0,
+            "offerSizes": data.1["offers"].map { $0.1["size"].stringValue },
+            "offerQuantities": data.1["offers"].map { $0.1["quantity"].stringValue },
+            "images": data.1["productImages"].map { $0.1["imageURL"].stringValue }
+        ])
+    }
+}
+
+class CartItem: Object {
+    @objc dynamic var catId = 0
+    @objc dynamic var id = ""
+    @objc dynamic var article = ""
+    @objc dynamic var name = ""
+    @objc dynamic var mainImage = ""
+    @objc dynamic var price = ""
+    @objc dynamic var size = ""
+}
+
+struct CategorieModel {
+    let id: String
+    let name: String
+    let iconImage: String
+    let parentId: String
+    
+    init(categorie: Categorie) {
+        self.id = categorie.id
+        self.name = categorie.name
+        self.iconImage = categorie.iconImage
+        self.parentId = categorie.parentId
+    }
+}
+
+struct ItemModel {
+    let catId: Int
+    let id: String
+    let name: String
+    let article: String
+    let mainImage: String
+    let price: String
+    let desc: String
+    let offerSizes: [String]
+    let offerQuantities: [String]
+    let images: [String]
+    
+    init() {
+        self.catId = -1
+        self.id = "item.id"
+        self.name = "item.name"
+        self.article = "item.article"
+        self.mainImage = "item.mainImage"
+        self.price = "item.price"
+        self.desc = "item.desc"
+        self.offerSizes = [""]
+        self.offerQuantities = [""]
+        self.images = [""]
+    }
+    
+    init(item: Item) {
+        self.catId = item.catId
+        self.id = item.id
+        self.name = item.name
+        self.article = item.article
+        self.mainImage = item.mainImage
+        self.price = item.price
+        self.desc = item.desc
+        self.offerSizes = Array(item.offerSizes)
+        self.offerQuantities = Array(item.offerQuantities)
+        self.images = Array(item.images)
+    }
 }
 
 struct CartItemModel {
@@ -80,95 +134,78 @@ struct CartItemModel {
     }
 }
 
-struct CategorieModel {
-    let id: String
-    let name: String
-    let iconImage: String
-    
-    init(categorie: Categorie) {
-        self.id = categorie.id
-        self.name = categorie.name
-        self.iconImage = categorie.iconImage
-    }
-}
-
-struct SubcategorieModel {
-    let id: String
-    let name: String
-    let iconImage: String
-    let parent: String
-    
-    init(subcategorie: Subcategorie) {
-        self.id = subcategorie.id
-        self.name = subcategorie.name
-        self.iconImage = subcategorie.iconImage
-        self.parent = subcategorie.parent
-    }
-}
-
-struct ItemModel {
-    let catId: Int
-    let id: String
-    let name: String
-    let article: String
-    let mainImage: String
-    let price: String
-    let desc: String
-    let offersSize: [String]
-    let offersQuantity: [String]
-    let images: [String]
-}
-
 protocol DBServiceProtocol {
     func clear(obj: Object.Type, completion: @escaping () -> Void)
     
-    func clear(catId: String, obj: Object.Type, completion: @escaping () -> Void)
+    func clearByCategorie(catId: String, obj: Object.Type, completion: @escaping () -> Void)
     
-    func put(json: JSON, completion: @escaping () -> Void)
+    func putCategories(json: JSON, completion: @escaping () -> Void)
+    
+    func putItems(catId:String, json: JSON, completion: @escaping () -> Void)
+    
+    func putInCart(item: ItemModel, size: String)
 
     func load(obj: Object.Type, completion: @escaping ([Any]) -> Void)
     
-    func load(catId: String, obj: Object.Type, completion: @escaping ([Any]) -> Void)
+    func loadByCategorie(catId: String, obj: Object.Type, completion: @escaping ([Any]) -> Void)
 }
 
 class DBRealmService: DBServiceProtocol {
     
     func clear(obj: Object.Type, completion: @escaping () -> Void) {
-        DispatchQueue.init(label: "aaa").async {
+        DispatchQueue.init(label: "dbThread").async {
             autoreleasepool{
                 let realm = try! Realm()
                 try! realm.write {
                     realm.delete(realm.objects(obj))
-                    DispatchQueue.main.async {
-                        completion()
-                    }
+                }
+                DispatchQueue.main.async {
+                    completion()
                 }
             }
         }
     }
     
-    func clear(catId: String, obj: Object.Type, completion: @escaping () -> Void) {
-        DispatchQueue.init(label: "aaa").async {
+    func clearByCategorie(catId: String, obj: Object.Type, completion: @escaping () -> Void) {
+        DispatchQueue.init(label: "dbThread").async {
             autoreleasepool{
                 let realm = try! Realm()
                 try! realm.write {
                     realm.delete(realm.objects(obj).filter("catId == \(catId)"))
-                    DispatchQueue.main.async {
-                        completion()
-                    }
+                }
+                DispatchQueue.main.async {
+                    completion()
                 }
             }
         }
     }
     
-    func put(json: JSON, completion: @escaping () -> Void) {
-        DispatchQueue.init(label: "aaa").async {
+    func putInCart(item: ItemModel, size: String) {
+        DispatchQueue.init(label: "dbThread").async {
+            autoreleasepool {
+                let realm = try! Realm()
+                let cartItem = CartItem()
+                cartItem.catId = (realm.objects(CartItem.self).last?.catId ?? 0) + 1
+                cartItem.name = item.name
+                cartItem.mainImage = item.mainImage
+                cartItem.size = size
+                cartItem.price = item.price
+                cartItem.article = item.id
+                try! realm.write {
+                    realm.add(cartItem)
+                }
+            }
+        }
+    }
+    
+    func putCategories(json: JSON, completion: @escaping () -> Void) {
+        DispatchQueue.init(label: "dbThread").async {
             autoreleasepool {
                 let realm = try! Realm()
                 let cats = json.map { cat -> Categorie in
-                    let categorieR = Categorie(data: cat)
+                    let categorieR = Categorie(parentId: "", data: cat)
                     let subcategories = cat.1["subcategories"].map {
-                        Subcategorie(parentId: cat.0, data: $0)
+                        Categorie(parentId: cat.0, data: $0)
                     }
                     try! realm.write{
                         realm.add(subcategories)
@@ -185,8 +222,26 @@ class DBRealmService: DBServiceProtocol {
         }
     }
     
-    func load(obj: Object.Type, completion: @escaping ([Any]) -> Void){
-        DispatchQueue.init(label: "aaa").async {
+    func putItems(catId: String, json: JSON, completion: @escaping () -> Void) {
+        DispatchQueue.init(label: "dbThread").async {
+            autoreleasepool {
+                let realm = try! Realm()
+                let items = json.map { item -> Item in
+                    let itemR = Item(catId: catId, data: item)
+                    return itemR
+                }
+                try! realm.write{
+                    realm.add(items)
+                }
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }
+        }
+    }
+    
+    func load(obj: Object.Type, completion: @escaping ([Any]) -> Void) {
+        DispatchQueue.init(label: "dbThread").async {
             autoreleasepool {
                 let realm = try! Realm()
                 let result = realm.objects(obj).sorted(byKeyPath: "id", ascending: false)
@@ -200,10 +255,6 @@ class DBRealmService: DBServiceProtocol {
                     models = result.map {
                         return CategorieModel(categorie: $0 as! Categorie)
                     }
-                case is Subcategorie:
-                    models = result.map {
-                        return SubcategorieModel(subcategorie: $0 as! Subcategorie)
-                    }
                 default:
                     break
                 }
@@ -213,13 +264,22 @@ class DBRealmService: DBServiceProtocol {
             }
         }
     }
-    func load(catId: String, obj: Object.Type, completion: @escaping ([Any]) -> Void) {
-        DispatchQueue.init(label: "aaa").async {
+    func loadByCategorie(catId: String, obj: Object.Type, completion: @escaping ([Any]) -> Void) {
+        DispatchQueue.init(label: "dbThread").async {
             autoreleasepool {
                 let realm = try! Realm()
-                let result = Array(realm.objects(obj).filter("catId == \(catId)").sorted(byKeyPath: "id", ascending: false))
+                let result = realm.objects(obj).sorted(byKeyPath: "id", ascending: false)
+                var models = [Any]()
+                switch result.first {
+                case is Item:
+                    models = result.map {
+                        return ItemModel(item: $0 as! Item)
+                    }
+                default:
+                    break
+                }
                 DispatchQueue.main.async {
-                    completion(result)
+                    completion(models)
                 }
             }
         }
