@@ -33,6 +33,7 @@ class ItemViewController: UIViewController {
         priceLbl.text = "\(item.price.split(separator: ".")[0])₽"
         
         images = Array(item.images) == [] ? [item.mainImage] : Array(item.images)
+        imagesPageControl.numberOfPages = images.count
         
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -40,8 +41,7 @@ class ItemViewController: UIViewController {
             vc.item = item
         }
     }
-    override func viewDidLayoutSubviews() {
-        imagesPageControl.numberOfPages = images.count
+    override func viewDidAppear(_ animated: Bool) {
         setupScreen()
     }
 
@@ -54,7 +54,7 @@ class ItemViewController: UIViewController {
             let imgView = UIImageView(frame: frame)
             imgView.kf.indicatorType = .activity
             let processor = DownsamplingImageProcessor(size: imagesView.frame.size)
-            imgView.kf.setImage(with: URL(string:"\(URLs().images)\(images[i])"), options: [.processor(processor)])
+            imgView.kf.setImage(with: URL(string:"\(URLs.images.rawValue)\(images[i])"), options: [.processor(processor)])
             imgView.contentMode = .scaleAspectFill
             
             imagesScrollView.addSubview(imgView)

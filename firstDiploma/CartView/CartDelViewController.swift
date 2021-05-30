@@ -12,7 +12,7 @@ class CartDelViewController: UIViewController {
     let dbService = Services.dBRealmService
     
     var cartItem: CartItemModel?
-    var delegate: DeleteCartItemProtocol?
+    weak var delegate: DeleteCartItemProtocol?
     
     @IBAction func noPressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)

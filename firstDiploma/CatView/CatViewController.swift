@@ -11,12 +11,14 @@ import SwiftyJSON
 
 class CatViewController: UIViewController {
 
-    let dbService: DBServiceProtocol = Services.dBRealmService
+    private let dbService: DBServiceProtocol = Services.dBRealmService
 
     var cats = [CategorieModel]()
     var subs = [CategorieModel]()
+    
     @IBOutlet weak var navItem: UINavigationItem!
     @IBOutlet weak var tableView: UITableView!
+    
     @IBAction func showCart(_ sender: Any) {
         if subs.count == 0 {
             performSegue(withIdentifier: "SubToCart", sender: nil)
@@ -25,14 +27,13 @@ class CatViewController: UIViewController {
         }
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         if cats.count == 0{
             loadCatsRS()
             loadCatsAF()
         }
-        self.tableView.reloadData()
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -47,9 +48,8 @@ class CatViewController: UIViewController {
                 vc.cat = cell.id
             }
         }
-        if let selected = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: selected, animated: true)
-        }
+        guard let selected = tableView.indexPathForSelectedRow  else { return }
+        tableView.deselectRow(at: selected, animated: true)
     }
     
     func loadCatsRS() {
@@ -70,21 +70,22 @@ class CatViewController: UIViewController {
     }
 
     func loadCatsAF() {
-        AF.request(URLs().catURL).responseJSON {
+        AF.request("\(URLs.catURL.rawValue)").responseJSON { [weak self]
             response in if let objects = response.value {
                 
                 let dispatchGroup = DispatchGroup()
                 dispatchGroup.enter()
-                self.dbService.clear(obj: Categorie.self) {
+                self?.dbService.clear(obj: Categorie.self) {
                     dispatchGroup.leave()
                 }
                 
                 dispatchGroup.notify(queue: .main, execute: {
-                    self.dbService.putCategories(json: JSON(objects)) { [weak self] in
+                    self?.dbService.putCategories(json: JSON(objects)) {
                         self?.loadCatsRS()
                     }
                 })
             }
+        self?.tableView.reloadData()
         }
     }
 

@@ -20,7 +20,7 @@
 		793894B9265B91D500EC4514 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 793894B8265B91D500EC4514 /* RealmSwift */; };
 		79621F7F265D5D20001AAC5A /* CatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F7E265D5D20001AAC5A /* CatCell.swift */; };
 		79621F81265D5F7D001AAC5A /* DBRealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F80265D5F7D001AAC5A /* DBRealmService.swift */; };
-		79621F83265D67C8001AAC5A /* URLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F82265D67C8001AAC5A /* URLs.swift */; };
+		79621F83265D67C8001AAC5A /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F82265D67C8001AAC5A /* Enums.swift */; };
 		79621F89265E6D1A001AAC5A /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F88265E6D1A001AAC5A /* ItemsViewController.swift */; };
 		79621F8B265E96AD001AAC5A /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79621F8A265E96AD001AAC5A /* ItemCell.swift */; };
 		79E7BE772661660D0001DB4B /* CartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E7BE762661660D0001DB4B /* CartViewController.swift */; };
@@ -42,7 +42,7 @@
 		793894A6265A925300EC4514 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		79621F7E265D5D20001AAC5A /* CatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatCell.swift; sourceTree = "<group>"; };
 		79621F80265D5F7D001AAC5A /* DBRealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBRealmService.swift; sourceTree = "<group>"; };
-		79621F82265D67C8001AAC5A /* URLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLs.swift; sourceTree = "<group>"; };
+		79621F82265D67C8001AAC5A /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		79621F88265E6D1A001AAC5A /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		79621F8A265E96AD001AAC5A /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		79E7BE762661660D0001DB4B /* CartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewController.swift; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 				793894A3265A925300EC4514 /* LaunchScreen.storyboard */,
 				793894A6265A925300EC4514 /* Info.plist */,
 				79621F80265D5F7D001AAC5A /* DBRealmService.swift */,
-				79621F82265D67C8001AAC5A /* URLs.swift */,
+				79621F82265D67C8001AAC5A /* Enums.swift */,
 			);
 			path = firstDiploma;
 			sourceTree = "<group>";
@@ -232,7 +232,7 @@
 				79E7BE772661660D0001DB4B /* CartViewController.swift in Sources */,
 				79E7BE7D26616CC30001DB4B /* BuyCell.swift in Sources */,
 				79E7BE7B26616BD10001DB4B /* BuyViewController.swift in Sources */,
-				79621F83265D67C8001AAC5A /* URLs.swift in Sources */,
+				79621F83265D67C8001AAC5A /* Enums.swift in Sources */,
 				79E7BE79266169700001DB4B /* CartCell.swift in Sources */,
 				79621F89265E6D1A001AAC5A /* ItemsViewController.swift in Sources */,
 				79621F8B265E96AD001AAC5A /* ItemCell.swift in Sources */,

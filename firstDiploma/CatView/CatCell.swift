@@ -11,7 +11,6 @@ import Kingfisher
 class CatCell: UITableViewCell {
     
     @IBOutlet weak var catImg: UIImageView!
-    
     @IBOutlet weak var catLbl: UILabel!
     
     var id = ""
@@ -21,8 +20,6 @@ class CatCell: UITableViewCell {
         self.catLbl.text = lbl
         let url = img != "" ? img : "image/catalog/style/modile/acc_cat.png"
         let processor = DownsamplingImageProcessor(size: catImg.frame.size)
-        self.catImg.kf.setImage(with: URL(string: "\(URLs().images)\(url)"), options: [.processor(processor)])
+        self.catImg.kf.setImage(with: URL(string: "\(URLs.images.rawValue)\(url)"), options: [.processor(processor)])
     }
-    
-    
 }

@@ -14,13 +14,15 @@ class ItemCell: UICollectionViewCell {
     @IBOutlet weak var itemImg: UIImageView!
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var priceLbl: UILabel!
+    
     @IBAction func buyPressed(_ sender: Any) {
         buyBtnPressed?()
     }
     var buyBtnPressed : (()->())?
+    
     var id = ""
     var item = ItemModel()
-    var name = "" {didSet {
+    private var name = "" {didSet {
         self.nameLbl.text = name
     }}
     
@@ -32,6 +34,6 @@ class ItemCell: UICollectionViewCell {
         let url = item.mainImage != "" ? item.mainImage : "image/catalog/style/modile/acc_cat.png"
         let processor = DownsamplingImageProcessor(size: itemImg.frame.size)
         self.itemImg.kf.indicatorType = .activity
-        self.itemImg.kf.setImage(with: URL(string: "\(URLs().images)\(url)"), options: [.processor(processor)])
+        self.itemImg.kf.setImage(with: URL(string: "\(URLs.images.rawValue)\(url)"), options: [.processor(processor)])
     }
 }

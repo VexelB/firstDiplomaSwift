@@ -35,7 +35,7 @@ class CartCell: UITableViewCell {
         id = item.0.catId
         self.amount = item.1
         let processor = DownsamplingImageProcessor(size: itemImg.frame.size)
-        itemImg.kf.setImage(with: URL(string: "\(URLs().images)\(item.0.mainImage)"), options: [.processor(processor)])
+        itemImg.kf.setImage(with: URL(string: "\(URLs.images.rawValue)\(item.0.mainImage)"), options: [.processor(processor)])
     }
 
 }
