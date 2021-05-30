@@ -13,22 +13,27 @@ import Kingfisher
 class ItemsViewController: UIViewController {
     
     private let sectionInsets = UIEdgeInsets(
-      top: 50.0,
-      left: 20.0,
-      bottom: 50.0,
-      right: 20.0)
-    
+      top: 10.0,
+      left: 10.0,
+      bottom: 10.0,
+      right: 10.0)
     private let itemsPerRow: CGFloat = 2
     
-    var items = [Item]()
+    private var items = [ItemModel]()
     var cat = ""
-    let realmcontroller = RealmController.shared
+    private let dbService = Services.dBRealmService
     
     @IBOutlet weak var collView: UICollectionView!
     @IBOutlet weak var navItem: UINavigationItem!
     
     @IBAction func showCart(_ sender: Any) {
         performSegue(withIdentifier: "ItemsToCart", sender: nil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        loadItemsRS()
+        loadAF()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -43,50 +48,28 @@ class ItemsViewController: UIViewController {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        loadRS()
-        loadAF()
-        // Do any additional setup after loading the view.
-    }
-    
-    func loadRS(){
-        realmcontroller.load(catId: cat, obj: Item.self, completion: { temp in
-            self.items = []
-            for i in temp {
-                if let a = i as? Item {
-                    self.items.append(a)
-                }
-            }
-            self.collView.reloadData()
-            self.collView.layoutIfNeeded()
+    func loadItemsRS(){
+        dbService.loadByCategorie(catId: cat, obj: Item.self, completion: { [weak self] results in
+            self?.items = results.map { $0 as! ItemModel }
+            self?.collView.reloadData()
         })
     }
+    
     func loadAF() {
-        AF.request("\(URLs().itemsURL)\(self.cat)").responseJSON {
+        AF.request("\(URLs.itemsURL.rawValue)\(self.cat)").responseJSON { [weak self]
             response in if let objects = response.value {
-                self.realmcontroller.clear(catId: self.cat, obj: Item.self)
-                let json = JSON(objects)
-                for i in json {
-                    let item = Item()
-                    item.id = i.0
-                    item.name = i.1["name"].stringValue
-                    item.article = i.1["article"].stringValue
-                    item.mainImage = i.1["mainImage"].stringValue
-                    item.price = i.1["price"].stringValue
-                    item.desc = i.1["description"].stringValue
-                    item.catId = Int(self.cat) ?? 0
-                    for j in i.1["offers"] {
-                        item.offersSize.append(j.1["size"].stringValue)
-                        item.offersQuantity.append(j.1["quantity"].stringValue)
-                    }
-                    for j in i.1["productImages"] {
-                            item.images.append(j.1["imageURL"].stringValue)
-                    }
-                    self.realmcontroller.put(obj: item)
+                let dispatchGroup = DispatchGroup()
+                dispatchGroup.enter()
+                self?.dbService.clear(obj: Item.self) {
+                    dispatchGroup.leave()
                 }
+                
+                dispatchGroup.notify(queue: .main, execute: {
+                    self?.dbService.putItems(catId: self?.cat ?? "-1", json: JSON(objects), completion: {
+                        self?.loadItemsRS()
+                    })
+                })
             }
-        self.loadRS()
         }
     }
 }
@@ -102,6 +85,7 @@ extension ItemsViewController: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
         let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
         let availableWidth = view.frame.width - paddingSpace
         let widthPerItem = availableWidth / itemsPerRow
@@ -115,14 +99,15 @@ extension ItemsViewController: UICollectionViewDataSource, UICollectionViewDeleg
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ItemCell", for: indexPath) as! ItemCell
+        
         cell.initCell(item: items[indexPath.row])
         
-        let temp = cell.frame.width
-        cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .trailing, relatedBy: .equal, toItem: cell.nameLbl, attribute: .trailing, multiplier: 1, constant: 8))
-        cell.nameLbl.addConstraint(NSLayoutConstraint(item: cell.nameLbl!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: temp - 16))
+//        cell.nameLbl.addConstraint()
+        
         cell.itemImg.frame.size.width = cell.frame.width
         cell.itemImg.frame.size.height = cell.itemImg.frame.width * 4 / 5
-        cell.layoutIfNeeded()
+        NSLayoutConstraint(item: cell.nameLbl!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cell.frame.width).isActive = true
+        
         cell.buyBtnPressed = {
             collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
             self.performSegue(withIdentifier: "ItemsToBuy", sender: nil)

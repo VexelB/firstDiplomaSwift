@@ -11,85 +11,81 @@ import SwiftyJSON
 
 class CatViewController: UIViewController {
 
-    let realmcontroller = RealmController.shared
+    private let dbService: DBServiceProtocol = Services.dBRealmService
 
-    var cats = [Categorie]()
-    var subs = [Subcategorie]()
-    @IBOutlet weak var tableView: UITableView!
-    @IBAction func showCart(_ sender: Any) {
-        performSegue(withIdentifier: "CatToCart", sender: nil)
-    }
+    var cats = [CategorieModel]()
+    var subs = [CategorieModel]()
     
+    @IBOutlet weak var navItem: UINavigationItem!
+    @IBOutlet weak var tableView: UITableView!
+    
+    @IBAction func showCart(_ sender: Any) {
+        if subs.count == 0 {
+            performSegue(withIdentifier: "SubToCart", sender: nil)
+        } else {
+            performSegue(withIdentifier: "CatToCart", sender: nil)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadCatsRS()
-        loadCatsAF()
+        if cats.count == 0{
+            loadCatsRS()
+            loadCatsAF()
+        }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? SubCatViewController, segue.identifier == "CatToSub" {
+        if let vc = segue.destination as? CatViewController, segue.identifier == "CatToSub" {
             if let select = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: select) as? CatCell {
                 vc.navItem.title = cell.catLbl.text
-                vc.cats = subs.filter{$0.parent!.id == cell.id}
+                vc.cats = subs.filter{$0.parentId == cell.id}
             }
-        } else if let vc = segue.destination as? ItemsViewController, segue.identifier == "CatToItems" {
+        } else if let vc = segue.destination as? ItemsViewController {
             if let select = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: select) as? CatCell {
                 vc.navItem.title = cell.catLbl.text
                 vc.cat = cell.id
             }
         }
-        if let selected = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: selected, animated: true)
-        }
+        guard let selected = tableView.indexPathForSelectedRow  else { return }
+        tableView.deselectRow(at: selected, animated: true)
     }
     
     func loadCatsRS() {
-        realmcontroller.load(obj: Categorie.self, completion: {temp in
-            self.cats = []
+        dbService.load(obj: Categorie.self, completion: { [weak self] temp in
+            self?.cats = []
             for i in temp {
-                if let a = i as? Categorie {
-                    self.cats.append(a)
-                    self.tableView.reloadData()
+                if let a = i as? CategorieModel {
+                    if a.parentId == "" {
+                        self?.cats.append(a)
+                    } else {
+                        self?.subs.append(a)
+                    }
                 }
+                self?.tableView.reloadData()
             }
-        })
-        realmcontroller.load(obj: Subcategorie.self, completion: { temp in
-            self.subs = []
-            for i in temp {
-                if let a = i as? Subcategorie {
-                    self.subs.append(a)
-                    self.tableView.reloadData()
-                }
-            }
+            self?.tableView.reloadData()
         })
     }
 
     func loadCatsAF() {
-        AF.request(URLs().catURL).responseJSON {
+        AF.request("\(URLs.catURL.rawValue)").responseJSON { [weak self]
             response in if let objects = response.value {
-                self.realmcontroller.clear(obj: Categorie.self)
-                self.realmcontroller.clear(obj: Subcategorie.self)
-                let json = JSON(objects)
-                for i in json {
-                    let cat = Categorie()
-                    cat.id = i.0
-                    cat.name = i.1["name"].stringValue
-                    cat.iconImage = i.1["iconImage"].stringValue
-                    if i.1["subcategories"] != [] {
-                        for j in i.1["subcategories"] {
-                            let cat1 = Subcategorie()
-                            cat1.id = j.1["id"].stringValue
-                            cat1.name = j.1["name"].stringValue
-                            cat1.iconImage = j.1["iconImage"].stringValue
-                            cat1.parent = cat
-                            self.realmcontroller.put(obj: cat1)
-                        }
-                    }
-                    self.realmcontroller.put(obj: cat)
+                
+                let dispatchGroup = DispatchGroup()
+                dispatchGroup.enter()
+                self?.dbService.clear(obj: Categorie.self) {
+                    dispatchGroup.leave()
                 }
+                
+                dispatchGroup.notify(queue: .main, execute: {
+                    self?.dbService.putCategories(json: JSON(objects)) {
+                        self?.loadCatsRS()
+                    }
+                })
             }
-        self.loadCatsRS()
+        self?.tableView.reloadData()
         }
     }
 
@@ -106,8 +102,10 @@ extension CatViewController: UITableViewDataSource, UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selected = cats[indexPath.row]
-        if subs.map({$0.parent!.name}).contains(selected.name) {
+        if subs.map({$0.parentId}).contains(selected.id) {
             performSegue(withIdentifier: "CatToSub", sender: nil)
+        } else if subs.count == 0{
+            performSegue(withIdentifier: "SubToItems", sender: nil)
         } else {
             performSegue(withIdentifier: "CatToItems", sender: nil)
         }
