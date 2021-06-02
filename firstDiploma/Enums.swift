@@ -7,8 +7,27 @@
 
 import Foundation
 
-enum URLs: String{
-    case catURL = "https://blackstarshop.ru/index.php?route=api/v1/categories"
-    case itemsURL = "https://blackstarshop.ru/index.php?route=api/v1/products&cat_id="
-    case images = "https://blackstarshop.ru/"
+enum URLs{
+    static let categorieURL = "https://blackstarshop.ru/index.php?route=api/v1/categories"
+    static let itemsURL = "https://blackstarshop.ru/index.php?route=api/v1/products&cat_id="
+    static let imagesURL = "https://blackstarshop.ru/"
+}
+
+enum Services {
+    static let dBRealmService = DBRealmService()
+}
+
+enum Threads {
+    static let dbThread = DispatchQueue.init(label: "dbThread")
+}
+
+enum Segues {
+    static let showSubcategorie = "CatToSub"
+    static let showItemsFromSubcategories = "SubToItems"
+    static let showItemsFromCategories = "CatToItems"
+    static let showCartFromItems = "ItemsToCart"
+    static let showBuyFromItems = "ItemsToBuy"
+    static let showItem = "ItemsToItem"
+    static let showCartFromItem = "ItemToCart"
+    
 }

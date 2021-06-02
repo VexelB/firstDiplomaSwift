@@ -55,8 +55,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="catImg" destination="bH3-Oz-3O3" id="beF-iT-yUr"/>
-                                            <outlet property="catLbl" destination="aTk-Sq-kzj" id="LhQ-st-7gE"/>
+                                            <outlet property="categorieImg" destination="bH3-Oz-3O3" id="NPt-hW-zlg"/>
+                                            <outlet property="categorieLbl" destination="aTk-Sq-kzj" id="60H-kc-zPE"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -143,8 +143,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="catImg" destination="VXF-dV-YIf" id="Afc-1V-9zE"/>
-                                            <outlet property="catLbl" destination="Dy0-Mc-0B0" id="9wp-jn-xwS"/>
+                                            <outlet property="categorieImg" destination="VXF-dV-YIf" id="Yla-Kb-Xym"/>
+                                            <outlet property="categorieLbl" destination="Dy0-Mc-0B0" id="QJ0-mt-wIv"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -743,7 +743,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="descLbl" destination="WPs-LO-55Y" id="Y0i-AZ-v83"/>
+                        <outlet property="descriptionLbl" destination="WPs-LO-55Y" id="cLr-fd-IPP"/>
                         <outlet property="imagesPageControl" destination="lfi-vN-mxf" id="oms-Co-A62"/>
                         <outlet property="imagesScrollView" destination="8pI-sF-r6z" id="r2c-vT-HFT"/>
                         <outlet property="imagesView" destination="IGU-t2-lut" id="qQM-48-ZSJ"/>
@@ -868,7 +868,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="k2w-dR-PR6"/>
         <segue reference="lAB-lR-DGa"/>
-        <segue reference="DQY-Il-Lfp"/>
+        <segue reference="dfS-bN-WaE"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="cart" catalog="system" width="128" height="102"/>

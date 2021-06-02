@@ -12,36 +12,40 @@ class ItemViewController: UIViewController {
 
     var images = [String]()
     var frame = CGRect.zero
-    var item = ItemModel()
+    var item: ItemModel?
     
     @IBOutlet weak var imagesView: UIView!
-    @IBOutlet weak var descLbl: UILabel!
+    @IBOutlet weak var descriptionLbl: UILabel!
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var priceLbl: UILabel!
     @IBOutlet weak var imagesScrollView: UIScrollView!
     @IBOutlet weak var imagesPageControl: UIPageControl!
     
     @IBAction func showCart(_ sender: Any) {
-        performSegue(withIdentifier: "ItemToCart", sender: nil)
+        performSegue(withIdentifier: Segues.showCartFromItem, sender: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        nameLbl.text = item.name
-        descLbl.text = item.desc
-        priceLbl.text = "\(item.price.split(separator: ".")[0])₽"
-        
-        images = Array(item.images) == [] ? [item.mainImage] : Array(item.images)
+        guard let itemImages = item?.images else { return }
+        images = Array(itemImages) == [] ? [item!.mainImage] : Array(itemImages)
         imagesPageControl.numberOfPages = images.count
+        
+        nameLbl.text = item?.name
+        descriptionLbl.text = item?.desc
+        priceLbl.text = "\(item!.price.split(separator: ".")[0])₽"
+        
         
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
         if let vc = segue.destination as? BuyViewController {
             vc.item = item
         }
     }
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         setupScreen()
     }
 
@@ -54,7 +58,7 @@ class ItemViewController: UIViewController {
             let imgView = UIImageView(frame: frame)
             imgView.kf.indicatorType = .activity
             let processor = DownsamplingImageProcessor(size: imagesView.frame.size)
-            imgView.kf.setImage(with: URL(string:"\(URLs.images.rawValue)\(images[i])"), options: [.processor(processor)])
+            imgView.kf.setImage(with: URL(string:"\(URLs.imagesURL)\(images[i])"), options: [.processor(processor)])
             imgView.contentMode = .scaleAspectFill
             
             imagesScrollView.addSubview(imgView)

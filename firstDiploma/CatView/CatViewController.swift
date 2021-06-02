@@ -13,14 +13,14 @@ class CatViewController: UIViewController {
 
     private let dbService: DBServiceProtocol = Services.dBRealmService
 
-    var cats = [CategorieModel]()
-    var subs = [CategorieModel]()
+    var categories = [CategorieModel]()
+    var subcategories = [CategorieModel]()
     
     @IBOutlet weak var navItem: UINavigationItem!
     @IBOutlet weak var tableView: UITableView!
     
     @IBAction func showCart(_ sender: Any) {
-        if subs.count == 0 {
+        if subcategories.count == 0 {
             performSegue(withIdentifier: "SubToCart", sender: nil)
         } else {
             performSegue(withIdentifier: "CatToCart", sender: nil)
@@ -29,7 +29,7 @@ class CatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if cats.count == 0{
+        if categories.count == 0{
             loadCatsRS()
             loadCatsAF()
         }
@@ -37,30 +37,29 @@ class CatViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? CatViewController, segue.identifier == "CatToSub" {
+        super.prepare(for: segue, sender: sender)
+        if let vc = segue.destination as? CatViewController {
             if let select = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: select) as? CatCell {
-                vc.navItem.title = cell.catLbl.text
-                vc.cats = subs.filter{$0.parentId == cell.id}
+                vc.navItem.title = cell.categorieLbl.text
+                vc.categories = subcategories.filter{$0.parentId == cell.id}
             }
         } else if let vc = segue.destination as? ItemsViewController {
             if let select = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: select) as? CatCell {
-                vc.navItem.title = cell.catLbl.text
-                vc.cat = cell.id
+                vc.navItem.title = cell.categorieLbl.text
+                vc.categorie = cell.id
             }
         }
-        guard let selected = tableView.indexPathForSelectedRow  else { return }
-        tableView.deselectRow(at: selected, animated: true)
     }
     
     func loadCatsRS() {
         dbService.load(obj: Categorie.self, completion: { [weak self] temp in
-            self?.cats = []
+            self?.categories = []
             for i in temp {
                 if let a = i as? CategorieModel {
                     if a.parentId == "" {
-                        self?.cats.append(a)
+                        self?.categories.append(a)
                     } else {
-                        self?.subs.append(a)
+                        self?.subcategories.append(a)
                     }
                 }
                 self?.tableView.reloadData()
@@ -70,7 +69,7 @@ class CatViewController: UIViewController {
     }
 
     func loadCatsAF() {
-        AF.request("\(URLs.catURL.rawValue)").responseJSON { [weak self]
+        AF.request("\(URLs.categorieURL)").responseJSON { [weak self]
             response in if let objects = response.value {
                 
                 let dispatchGroup = DispatchGroup()
@@ -93,22 +92,23 @@ class CatViewController: UIViewController {
 
 extension CatViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cats.count
+        return categories.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CatCell", for: indexPath) as! CatCell
-        cell.initCell(id: cats[indexPath.row].id, img: cats[indexPath.row].iconImage, lbl: cats[indexPath.row].name)
+        cell.initCell(id: categories[indexPath.row].id, img: categories[indexPath.row].iconImage, lbl: categories[indexPath.row].name)
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selected = cats[indexPath.row]
-        if subs.map({$0.parentId}).contains(selected.id) {
-            performSegue(withIdentifier: "CatToSub", sender: nil)
-        } else if subs.count == 0{
-            performSegue(withIdentifier: "SubToItems", sender: nil)
+        let selected = categories[indexPath.row]
+        if subcategories.map({$0.parentId}).contains(selected.id) {
+            performSegue(withIdentifier: Segues.showSubcategorie, sender: nil)
+        } else if subcategories.count == 0{
+            performSegue(withIdentifier: Segues.showItemsFromSubcategories, sender: nil)
         } else {
-            performSegue(withIdentifier: "CatToItems", sender: nil)
+            performSegue(withIdentifier: Segues.showItemsFromCategories, sender: nil)
         }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 

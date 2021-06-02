@@ -13,7 +13,8 @@ protocol DeleteCartItemProtocol: AnyObject {
 
 class CartViewController: UIViewController {
     
-    let dbService = Services.dBRealmService
+    private let dbService = Services.dBRealmService
+    
     var cart = [(item: CartItemModel, amount: Int)]()
     var fullprice = 0 { didSet{
         fullpriceLbl.text = "\(fullprice)₽"
@@ -28,10 +29,12 @@ class CartViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         loadCart()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
         if let vc = segue.destination as? CartDelViewController {
             if let index = tableView.indexPathForSelectedRow {
                 vc.cartItem = cart[index.row].item

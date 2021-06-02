@@ -34,6 +34,6 @@ class ItemCell: UICollectionViewCell {
         let url = item.mainImage != "" ? item.mainImage : "image/catalog/style/modile/acc_cat.png"
         let processor = DownsamplingImageProcessor(size: itemImg.frame.size)
         self.itemImg.kf.indicatorType = .activity
-        self.itemImg.kf.setImage(with: URL(string: "\(URLs.images.rawValue)\(url)"), options: [.processor(processor)])
+        self.itemImg.kf.setImage(with: URL(string: "\(URLs.imagesURL)\(url)"), options: [.processor(processor)])
     }
 }

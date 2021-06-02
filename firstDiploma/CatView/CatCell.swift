@@ -10,16 +10,16 @@ import Kingfisher
 
 class CatCell: UITableViewCell {
     
-    @IBOutlet weak var catImg: UIImageView!
-    @IBOutlet weak var catLbl: UILabel!
+    @IBOutlet weak var categorieImg: UIImageView!
+    @IBOutlet weak var categorieLbl: UILabel!
     
     var id = ""
 
     func initCell(id: String, img: String, lbl: String) {
         self.id = id
-        self.catLbl.text = lbl
+        self.categorieLbl.text = lbl
         let url = img != "" ? img : "image/catalog/style/modile/acc_cat.png"
-        let processor = DownsamplingImageProcessor(size: catImg.frame.size)
-        self.catImg.kf.setImage(with: URL(string: "\(URLs.images.rawValue)\(url)"), options: [.processor(processor)])
+        let processor = DownsamplingImageProcessor(size: categorieImg.frame.size)
+        self.categorieImg.kf.setImage(with: URL(string: "\(URLs.imagesURL)\(url)"), options: [.processor(processor)])
     }
 }

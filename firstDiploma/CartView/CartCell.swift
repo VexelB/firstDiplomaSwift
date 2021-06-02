@@ -19,6 +19,7 @@ class CartCell: UITableViewCell {
     @IBAction func delPressed(_ sender: Any) {
         delBtnPressed?()
     }
+    var delBtnPressed: (()->())?
     
     var amount = 1 {
         didSet{
@@ -26,7 +27,6 @@ class CartCell: UITableViewCell {
         }
     }
     var id = 0
-    var delBtnPressed: (()->())?
     
     func initCell(item: (CartItemModel, Int)) {
         nameLbl.text = item.0.name
@@ -35,7 +35,7 @@ class CartCell: UITableViewCell {
         id = item.0.catId
         self.amount = item.1
         let processor = DownsamplingImageProcessor(size: itemImg.frame.size)
-        itemImg.kf.setImage(with: URL(string: "\(URLs.images.rawValue)\(item.0.mainImage)"), options: [.processor(processor)])
+        itemImg.kf.setImage(with: URL(string: "\(URLs.imagesURL)\(item.0.mainImage)"), options: [.processor(processor)])
     }
 
 }
