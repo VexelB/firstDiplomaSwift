@@ -17,10 +17,6 @@ enum Services {
     static let dBRealmService = DBRealmService()
 }
 
-enum Threads {
-    static let dbThread = DispatchQueue.init(label: "dbThread")
-}
-
 enum Segues {
     static let showSubcategorie = "CatToSub"
     static let showItemsFromSubcategories = "SubToItems"

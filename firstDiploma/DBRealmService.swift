@@ -90,7 +90,7 @@ protocol DBServiceProtocol {
 class DBRealmService: DBServiceProtocol {
     
     func clear(obj: Object.Type, completion: @escaping () -> Void) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool{
                 let realm = try! Realm()
                 try! realm.write {
@@ -104,7 +104,7 @@ class DBRealmService: DBServiceProtocol {
     }
     
     func clearByCategorie(catId: String, obj: Object.Type, completion: @escaping () -> Void) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool{
                 let realm = try! Realm()
                 try! realm.write {
@@ -118,7 +118,7 @@ class DBRealmService: DBServiceProtocol {
     }
     
     func delFromCart(item: CartItemModel, completion: @escaping () -> Void) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool{
                 let realm = try! Realm()
                 try! realm.write {
@@ -134,7 +134,7 @@ class DBRealmService: DBServiceProtocol {
     }
     
     func putInCart(item: ItemModel, size: String) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool {
                 let realm = try! Realm()
                 let cartItem = CartItem()
@@ -151,7 +151,7 @@ class DBRealmService: DBServiceProtocol {
     }
     
     func putCategories(json: JSON, completion: @escaping () -> Void) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool {
                 let realm = try! Realm()
                 let cats = json.map { cat -> Categorie in
@@ -175,7 +175,7 @@ class DBRealmService: DBServiceProtocol {
     }
     
     func putItems(catId: String, json: JSON, completion: @escaping () -> Void) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool {
                 let realm = try! Realm()
                 let items = json.map { item -> Item in
@@ -193,7 +193,7 @@ class DBRealmService: DBServiceProtocol {
     }
     
     func load(obj: Object.Type, completion: @escaping ([Any]) -> Void) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool {
                 let realm = try! Realm()
                 let result = realm.objects(obj).sorted(byKeyPath: "id", ascending: false)
@@ -217,7 +217,7 @@ class DBRealmService: DBServiceProtocol {
         }
     }
     func loadByCategorie(catId: String, obj: Object.Type, completion: @escaping ([Any]) -> Void) {
-        Threads.dbThread.async {
+        DispatchQueue.dbThread.async {
             autoreleasepool {
                 let realm = try! Realm()
                 let result = realm.objects(obj).sorted(byKeyPath: "id", ascending: false)
@@ -236,4 +236,8 @@ class DBRealmService: DBServiceProtocol {
             }
         }
     }
+}
+
+extension DispatchQueue {
+    static let dbThread = DispatchQueue.init(label: "dbThread")
 }
