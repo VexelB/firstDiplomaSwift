@@ -12,6 +12,8 @@ import Kingfisher
 
 class ItemsViewController: UIViewController {
     
+    private let dbService = Services.dBRealmService
+    
     private let sectionInsets = UIEdgeInsets(
       top: 10.0,
       left: 10.0,
@@ -20,14 +22,13 @@ class ItemsViewController: UIViewController {
     private let itemsPerRow: CGFloat = 2
     
     private var items = [ItemModel]()
-    var cat = ""
-    private let dbService = Services.dBRealmService
+    var categorie = ""
     
     @IBOutlet weak var collView: UICollectionView!
     @IBOutlet weak var navItem: UINavigationItem!
     
     @IBAction func showCart(_ sender: Any) {
-        performSegue(withIdentifier: "ItemsToCart", sender: nil)
+        performSegue(withIdentifier: Segues.showCartFromItems, sender: nil)
     }
     
     override func viewDidLoad() {
@@ -37,11 +38,12 @@ class ItemsViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? ItemViewController, segue.identifier == "ItemsToItem" {
+        super.prepare(for: segue, sender: sender)
+        if let vc = segue.destination as? ItemViewController {
             if let select = collView.indexPathsForSelectedItems, let item = collView.cellForItem(at: select[0]) as? ItemCell {
                 vc.item = item.item
             }
-        } else if let vc = segue.destination as? BuyViewController, segue.identifier == "ItemsToBuy" {
+        } else if let vc = segue.destination as? BuyViewController {
             if let select = collView.indexPathsForSelectedItems, let item = collView.cellForItem(at: select[0]) as? ItemCell {
                 vc.item = item.item
             }
@@ -49,14 +51,14 @@ class ItemsViewController: UIViewController {
     }
     
     func loadItemsRS(){
-        dbService.loadByCategorie(catId: cat, obj: Item.self, completion: { [weak self] results in
+        dbService.loadByCategorie(catId: categorie, obj: Item.self, completion: { [weak self] results in
             self?.items = results.map { $0 as! ItemModel }
             self?.collView.reloadData()
         })
     }
     
     func loadAF() {
-        AF.request("\(URLs.itemsURL.rawValue)\(self.cat)").responseJSON { [weak self]
+        AF.request("\(URLs.itemsURL)\(self.categorie)").responseJSON { [weak self]
             response in if let objects = response.value {
                 let dispatchGroup = DispatchGroup()
                 dispatchGroup.enter()
@@ -65,7 +67,7 @@ class ItemsViewController: UIViewController {
                 }
                 
                 dispatchGroup.notify(queue: .main, execute: {
-                    self?.dbService.putItems(catId: self?.cat ?? "-1", json: JSON(objects), completion: {
+                    self?.dbService.putItems(catId: self?.categorie ?? "-1", json: JSON(objects), completion: {
                         self?.loadItemsRS()
                     })
                 })
@@ -102,22 +104,21 @@ extension ItemsViewController: UICollectionViewDataSource, UICollectionViewDeleg
         
         cell.initCell(item: items[indexPath.row])
         
-//        cell.nameLbl.addConstraint()
-        
         cell.itemImg.frame.size.width = cell.frame.width
         cell.itemImg.frame.size.height = cell.itemImg.frame.width * 4 / 5
         NSLayoutConstraint(item: cell.nameLbl!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: cell.frame.width).isActive = true
         
         cell.buyBtnPressed = {
             collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-            self.performSegue(withIdentifier: "ItemsToBuy", sender: nil)
+            self.performSegue(withIdentifier: Segues.showBuyFromItems, sender: nil)
         }
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "ItemsToItem", sender: nil)
+        performSegue(withIdentifier: Segues.showItem, sender: nil)
+        collView.deselectItem(at: indexPath, animated: true)
     }
     
 }
