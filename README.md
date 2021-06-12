@@ -1,3 +1,3 @@
 # firstDiplomaSwift
 
-Здксь будет инфа по первому дипломному проекту в Скиллбоксе
+![пример](https://github.com/VexelB/firstDiplomaSwift/blob/main/sample.gif)
